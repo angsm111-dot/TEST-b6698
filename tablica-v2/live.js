@@ -31,7 +31,7 @@ function renderBoard(board){
     for(const row of group)addRow(body,row.weight||row.label,[row.buy,row.sell,...(key==='bullion'?[row.delivery]:[])]);
    }
   }else for(const row of rows)addRow(body,row.label,[row.buy,row.sell,...(key==='goldBars'?[row.delivery]:[])],row.number);
-  for(const header of section.querySelectorAll('[data-delivery]'))header.textContent='Dostawa '+board.deliveryDays+' dni';
+  for(const header of section.querySelectorAll('[data-delivery]'))header.replaceChildren(document.createTextNode('Dostawa'),document.createElement('br'),document.createTextNode('w '+board.deliveryDays+' dni'));
  }
 }
 function renderLegacy(data){
