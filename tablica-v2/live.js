@@ -59,7 +59,11 @@ async function refresh(){
   if(data.board)renderBoard(data.board);else renderLegacy(data);
   ['gold','silver'].forEach((metal,index)=>{
    const item=data.metals[metal],target=document.querySelectorAll('.rate')[index];
-   target.textContent=(index?'Srebro 999':'Złoto 999,9')+' '+(item.change>0?'↑':item.change<0?'↓':'↔')+' '+spotMoney(item.spot)+'/g | '+spotMoney(item.spot*31.1034768)+'/oz';
+   const arrow=document.createElement('span');
+   arrow.className='rate-arrow '+(item.change>0?'rate-up':item.change<0?'rate-down':'rate-flat');
+   arrow.textContent=item.change>0?'↑':item.change<0?'↓':'↔';
+   arrow.setAttribute('aria-label',item.change>0?'wzrost':item.change<0?'spadek':'bez zmian');
+   target.replaceChildren(document.createTextNode((index?'Srebro 999':'Złoto 999,9')+' '),arrow,document.createTextNode(' '+spotMoney(item.spot)+'/g | '+spotMoney(item.spot*31.1034768)+'/oz'));
   });
   lastSuccess=data.fetchedAt;document.body.classList.remove('fetch-error');
   status.textContent=data.board?'':'WYMAGANE WDROŻENIE NOWEGO PANELU';
