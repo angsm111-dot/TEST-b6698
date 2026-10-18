@@ -17,7 +17,7 @@ function renderBoard(board){
  for(const [index,key] of sectionKeys.entries()){
   const section=sections[index],body=section.querySelector('tbody');body.replaceChildren();
   section.classList.toggle('section-disabled',board.sections[key]?.visible===false);
-  const rows=board.rows.filter(r=>r.section===key).sort((a,b)=>a.number-b.number||b.fineWeight-a.fineWeight);
+  const rows=board.rows.filter(r=>r.section===key).sort((a,b)=>(a.order??a.number*1000)-(b.order??b.number*1000)||a.number-b.number||b.fineWeight-a.fineWeight);
   if(['bullion','historical','other'].includes(key)){
    const families=new Map();for(const row of rows){if(!families.has(row.family))families.set(row.family,[]);families.get(row.family).push(row)}
    for(const group of families.values()){
