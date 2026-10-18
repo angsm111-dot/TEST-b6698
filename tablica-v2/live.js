@@ -75,7 +75,12 @@ async function refresh(){
    arrow.className='rate-arrow '+(item.change>0?'rate-up':item.change<0?'rate-down':'rate-flat');
    arrow.textContent=item.change>0?'↑':item.change<0?'↓':'↔';
    arrow.setAttribute('aria-label',item.change>0?'wzrost':item.change<0?'spadek':'bez zmian');
-   target.replaceChildren(document.createTextNode((index?'Srebro 999':'Złoto 999,9')+' '),arrow,document.createTextNode(' '+spotMoney(item.spot)+'/g | '+spotMoney(item.spot*31.1034768)+'/oz'));
+   const label=document.createElement('span');label.className='rate-label';label.textContent=index?'Srebro 999':'Złoto 999,9';
+   const main=document.createElement('span');main.className='rate-main';
+   const unit=document.createElement('span');unit.className='rate-unit';unit.textContent='/ g';
+   main.append(arrow,document.createTextNode(spotMoney(item.spot)),unit);
+   const ounce=document.createElement('span');ounce.className='rate-oz';ounce.textContent=spotMoney(item.spot*31.1034768)+' / oz';
+   target.replaceChildren(label,main,ounce);
   });
   lastSuccess=data.fetchedAt;document.body.classList.remove('fetch-error');
   status.textContent=data.board?'':'WYMAGANE WDROŻENIE NOWEGO PANELU';
