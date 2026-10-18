@@ -79,7 +79,7 @@ async function refresh(){
   });
   lastSuccess=data.fetchedAt;document.body.classList.remove('fetch-error');
   status.textContent=data.board?'':'WYMAGANE WDROŻENIE NOWEGO PANELU';
-  if(assessOverflow())status.textContent+=(status.textContent?' • ':'')+'ZA DUŻO POZYCJI — ZMNIEJSZ ZAKRES W PANELU';
+  if(assessOverflow())status.textContent+=(status.textContent?' • ':'')+'CZĘŚĆ TREŚCI NIE MIEŚCI SIĘ W KOLUMNACH';
  }catch(error){
   document.body.classList.add('fetch-error');
   status.textContent=lastSuccess?'BŁĄD AKTUALIZACJI • OSTATNIE DANE: '+stamp():'BRAK POŁĄCZENIA Z PANELEM • CENY NIEDOSTĘPNE';
