@@ -62,8 +62,8 @@ async function refresh(){
    target.textContent=(index?'Srebro 999':'Złoto 999,9')+' '+(item.change>0?'↑':item.change<0?'↓':'↔')+' '+spotMoney(item.spot)+'/g | '+spotMoney(item.spot*31.1034768)+'/oz';
   });
   lastSuccess=data.fetchedAt;document.body.classList.remove('fetch-error');
-  status.textContent=data.board?'TABLICA TESTOWA • CENY Z PANELU':'TABLICA TESTOWA • WYMAGANE WDROŻENIE NOWEGO PANELU';
-  if(assessOverflow())status.textContent+=' • ZA DUŻO POZYCJI — ZMNIEJSZ ZAKRES W PANELU';
+  status.textContent=data.board?'':'WYMAGANE WDROŻENIE NOWEGO PANELU';
+  if(assessOverflow())status.textContent+=(status.textContent?' • ':'')+'ZA DUŻO POZYCJI — ZMNIEJSZ ZAKRES W PANELU';
  }catch(error){
   document.body.classList.add('fetch-error');
   status.textContent=lastSuccess?'BŁĄD AKTUALIZACJI • OSTATNIE DANE: '+stamp():'BRAK POŁĄCZENIA Z PANELEM • CENY NIEDOSTĘPNE';
