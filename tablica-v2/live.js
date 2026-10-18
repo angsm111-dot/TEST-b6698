@@ -44,8 +44,20 @@ function renderLegacy(data){
  });
 }
 function stamp(){return lastSuccess?new Date(lastSuccess).toLocaleString('pl-PL',{timeZone:'Europe/Warsaw'}):'—'}
+function alignBullionBuyHeader(){
+ const section=sections[0],header=section.querySelector('thead th:nth-child(2)');
+ let label=header.querySelector('span');
+ if(!label){label=document.createElement('span');label.textContent=header.textContent;header.replaceChildren(label);label.style.display='inline-block'}
+ label.style.transform='';
+ const starts=[...section.querySelectorAll('tbody tr:not(.family) td:first-of-type')].filter(cell=>cell.textContent!=='—').map(cell=>{const range=document.createRange();range.selectNodeContents(cell);return range.getBoundingClientRect().left});
+ if(!starts.length)return;
+ const board=document.querySelector('.board'),scale=board.getBoundingClientRect().width/board.offsetWidth;
+ if(scale>0)label.style.transform='translateX('+((Math.min(...starts)-label.getBoundingClientRect().left)/scale)+'px)';
+}
+addEventListener('resize',()=>requestAnimationFrame(alignBullionBuyHeader));
 function assessOverflow(){
  for(const section of sections){section.classList.remove('compact','dense');if(section.scrollHeight>section.clientHeight)section.classList.add('compact');if(section.scrollHeight>section.clientHeight)section.classList.add('dense')}
+ alignBullionBuyHeader();
  return sections.some(s=>s.scrollHeight>s.clientHeight||s.scrollWidth>s.clientWidth);
 }
 async function refresh(){
