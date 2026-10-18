@@ -5,10 +5,14 @@ const status=document.querySelector('.demo');
 const money=value=>typeof value==='number'&&Number.isFinite(value)?Math.round(value).toLocaleString('pl-PL',{useGrouping:false,maximumFractionDigits:0})+' zł':'—';
 const spotMoney=value=>typeof value==='number'&&Number.isFinite(value)?value.toLocaleString('pl-PL',{useGrouping:false,maximumFractionDigits:2,minimumFractionDigits:2})+' zł':'—';
 let deadline=Date.now(),lastSuccess=null,busy=false;
+function appendLabel(cell,label,number){
+ const wrapper=document.createElement('span');wrapper.className='position-label';
+ if(number){const badge=document.createElement('b');badge.className='display-number';badge.textContent=number+'.';wrapper.append(badge)}
+ const name=document.createElement('span');name.className='position-name';name.textContent=label;wrapper.append(name);cell.append(wrapper);
+}
 function addRow(body,label,prices,number){
  const tr=document.createElement('tr'),th=document.createElement('th');
- if(number){const badge=document.createElement('b');badge.className='display-number';badge.textContent=number+'.';th.append(badge,' ')}
- th.append(document.createTextNode(label));tr.append(th);
+ appendLabel(th,label,number);tr.append(th);
  for(const value of prices){const td=document.createElement('td');td.textContent=money(value);tr.append(td)}
  body.append(tr);
 }
@@ -23,7 +27,7 @@ function renderBoard(board){
    for(const group of families.values()){
     const first=group[0];
     if(key!=='bullion'&&group.length===1){addRow(body,first.label,[first.buy,first.sell],first.number);continue}
-    const tr=document.createElement('tr'),th=document.createElement('th'),badge=document.createElement('b');tr.className='family';th.colSpan=key==='bullion'?4:3;badge.className='display-number';badge.textContent=first.number+'.';th.append(badge,' '+first.label);tr.append(th);body.append(tr);
+    const tr=document.createElement('tr'),th=document.createElement('th');tr.className='family';th.colSpan=key==='bullion'?4:3;appendLabel(th,first.label,first.number);tr.append(th);body.append(tr);
     for(const row of group)addRow(body,row.weight||row.label,[row.buy,row.sell,...(key==='bullion'?[row.delivery]:[])]);
    }
   }else for(const row of rows)addRow(body,row.label,[row.buy,row.sell,...(key==='goldBars'?[row.delivery]:[])],row.number);
