@@ -62,8 +62,10 @@ function assessOverflow(){
 }
 async function refresh(){
  if(busy)return;busy=true;
+ const controller=typeof AbortController==='function'?new AbortController():null;
+ const timeout=controller?setTimeout(()=>controller.abort(),15000):null;
  try{
-  const res=await fetch('/panel-api/prices',{cache:'no-store',signal:AbortSignal.timeout(15000)});
+  const res=await fetch('/panel-api/prices',{cache:'no-store',...(controller?{signal:controller.signal}:{})});
   if(!res.ok)throw Error('HTTP '+res.status);
   const data=await res.json();
   if(!data.products||!data.metals?.gold||!data.metals?.silver||!Number.isFinite(Date.parse(data.fetchedAt)))throw Error('Nieprawidłowe dane');
@@ -87,8 +89,9 @@ async function refresh(){
   if(assessOverflow())status.textContent+=(status.textContent?' • ':'')+'CZĘŚĆ TREŚCI NIE MIEŚCI SIĘ W KOLUMNACH';
  }catch(error){
   document.body.classList.add('fetch-error');
-  status.textContent=lastSuccess?'BŁĄD AKTUALIZACJI • OSTATNIE DANE: '+stamp():'BRAK POŁĄCZENIA Z PANELEM • CENY NIEDOSTĘPNE';
- }finally{busy=false;deadline=Date.now()+60000;updateTimer()}
+  const reason=error.name==='AbortError'?'PRZEKROCZONY CZAS POŁĄCZENIA':error.message==='Nieaktualne notowania'?'NIEAKTUALNE NOTOWANIA — SPRAWDŹ TEŻ DATĘ KOMPUTERA':/^HTTP \d+$/.test(error.message)?error.message:error.name==='TypeError'?'BŁĄD SIECI LUB PRZEGLĄDARKI':'NIEPRAWIDŁOWE DANE Z PANELU';
+  status.textContent=(lastSuccess?'BŁĄD AKTUALIZACJI • OSTATNIE DANE: '+stamp():'CENY NIEDOSTĘPNE')+' • '+reason;
+ }finally{if(timeout!==null)clearTimeout(timeout);busy=false;deadline=Date.now()+60000;updateTimer()}
 }
 function updateTimer(){
  if(lastSuccess&&Date.now()-Date.parse(lastSuccess)>600000){document.body.classList.add('fetch-error');status.textContent='NIEAKTUALNE CENY • OSTATNIE DANE: '+stamp()}
